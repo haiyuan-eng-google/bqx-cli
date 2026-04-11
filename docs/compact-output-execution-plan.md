@@ -141,7 +141,7 @@ Add one line to the Output Format section:
 
 ```markdown
 Use `--format=json-minified` for agent/CI pipelines — same schema,
-~32% fewer tokens.
+28% fewer tokens (benchmarked).
 ```
 
 **13. Benchmark doc**
@@ -175,7 +175,7 @@ section noting that `json-minified` closes the token gap.
 
 ## PR 2: MCP bridge defaults to `json-minified`
 
-**Goal:** MCP consumers get the 32% token reduction automatically.
+**Goal:** MCP consumers get the 27% token reduction automatically.
 
 ### Changes
 
@@ -267,6 +267,14 @@ and what `meta describe` / skills advertise.
 
 ## Validation
 
-After PR 1 + PR 2 merge, re-run the BigQuery benchmark track with
-`--format=json-minified` and measure actual token savings against the
-2,859-token baseline. Expected: ~1,933 tokens (32% reduction).
+**Completed.** Benchmark run `20260411-013709-b4c8ac5` measured actual
+token savings after PR 1 + PR 2 merged:
+
+| | dcx (json) | dcx (json-minified) | bq |
+|---|---:|---:|---:|
+| 6-step workflow bytes | 11,436 B | 8,319 B | 8,461 B |
+| Estimated tokens (÷4) | ~2,859 | **~2,080** | ~2,115 |
+| Reduction vs json | — | **27%** | — |
+
+Result: **27% reduction** (predicted 32%). dcx-minified now uses fewer
+tokens than bq (2,080 vs 2,115) — token parity achieved.

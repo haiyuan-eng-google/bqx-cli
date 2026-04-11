@@ -1,0 +1,1 @@
+{"error":{"code":"INFRA_ERROR","exit_code":2,"message":"BigQuery API error 400: Syntax error: Unexpected identifier \"SELEKT\" at [1:1]","retryable":false,"status":"error"}}

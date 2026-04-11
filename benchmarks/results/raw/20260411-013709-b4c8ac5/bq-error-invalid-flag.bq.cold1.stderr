@@ -1,0 +1,2 @@
+FATAL Flags parsing error: Unknown command line flag 'nonexistent_flag'
+Run 'bq.py help' to get help

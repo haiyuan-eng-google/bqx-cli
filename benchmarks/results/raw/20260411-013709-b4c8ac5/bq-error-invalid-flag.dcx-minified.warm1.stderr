@@ -1,0 +1,5 @@
+error: unexpected argument '--nonexistent-flag' found
+
+Usage: dcx datasets list --project-id <PROJECT_ID>
+
+For more information, try '--help'.

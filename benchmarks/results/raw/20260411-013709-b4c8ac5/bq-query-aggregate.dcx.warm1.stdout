@@ -1,0 +1,45 @@
+{
+  "total_rows": 10,
+  "rows": [
+    {
+      "total": "25568",
+      "word": "the"
+    },
+    {
+      "total": "21028",
+      "word": "I"
+    },
+    {
+      "total": "19649",
+      "word": "and"
+    },
+    {
+      "total": "17361",
+      "word": "to"
+    },
+    {
+      "total": "16438",
+      "word": "of"
+    },
+    {
+      "total": "13409",
+      "word": "a"
+    },
+    {
+      "total": "12527",
+      "word": "you"
+    },
+    {
+      "total": "11291",
+      "word": "my"
+    },
+    {
+      "total": "10589",
+      "word": "in"
+    },
+    {
+      "total": "8735",
+      "word": "is"
+    }
+  ]
+}

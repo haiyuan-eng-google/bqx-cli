@@ -1,0 +1,49 @@
+{
+  "creationTime": "1775865865837",
+  "etag": "YEoBUwSxf2W1Fzlg6er1FA==",
+  "id": "test-project-0728-467323:dcx_benchmark.narrow_events",
+  "kind": "bigquery#table",
+  "lastModifiedTime": "1775866747287",
+  "location": "US",
+  "numActiveLogicalBytes": "644",
+  "numActivePhysicalBytes": "3516",
+  "numBytes": "644",
+  "numCurrentPhysicalBytes": "3516",
+  "numLongTermBytes": "0",
+  "numLongTermLogicalBytes": "0",
+  "numLongTermPhysicalBytes": "0",
+  "numRows": "20",
+  "numTimeTravelPhysicalBytes": "0",
+  "numTotalLogicalBytes": "644",
+  "numTotalPhysicalBytes": "3516",
+  "schema": {
+    "fields": [
+      {
+        "mode": "REQUIRED",
+        "name": "event_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "event_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "REQUIRED",
+        "name": "created_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "name": "value",
+        "type": "FLOAT"
+      }
+    ]
+  },
+  "selfLink": "https://www.googleapis.com/bigquery/v2/projects/test-project-0728-467323/datasets/dcx_benchmark/tables/narrow_events",
+  "tableReference": {
+    "datasetId": "dcx_benchmark",
+    "projectId": "test-project-0728-467323",
+    "tableId": "narrow_events"
+  },
+  "type": "TABLE"
+}

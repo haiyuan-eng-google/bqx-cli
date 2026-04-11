@@ -1,0 +1,10 @@
+{
+  "dry_run": true,
+  "url": "https://bigquery.googleapis.com/bigquery/v2/projects/test-project-0728-467323/queries",
+  "method": "POST",
+  "body": {
+    "query": "SELECT word, SUM(word_count) AS total FROM `bigquery-public-data.samples.shakespeare` GROUP BY word ORDER BY total DESC LIMIT 10",
+    "useLegacySql": false,
+    "location": "US"
+  }
+}

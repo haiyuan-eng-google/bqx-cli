@@ -1,0 +1,285 @@
+{
+  "items": [
+    {
+      "datasetReference": {
+        "datasetId": "adk_logs",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:adk_logs",
+      "kind": "bigquery#dataset",
+      "location": "us-central1",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "adk_metadata",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:adk_metadata",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "agent_analytics",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:agent_analytics",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "agent_analytics_demo",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:agent_analytics_demo",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "b_q_remote_model_tutorial",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:b_q_remote_model_tutorial",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "bde_demo",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:bde_demo",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "bq_demo",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:bq_demo",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "bq_llm_tutorial",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:bq_llm_tutorial",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "bqml_demo",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:bqml_demo",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "bqml_tutorial",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:bqml_tutorial",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "cloud_logging_export",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:cloud_logging_export",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "cloud_trace_export",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:cloud_trace_export",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "dcx_benchmark",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:dcx_benchmark",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "gemini_summarization",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:gemini_summarization",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "llm",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:llm",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "llm_dataset",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:llm_dataset",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "llm_demos",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:llm_demos",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "llm_models",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:llm_models",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "llm_workspace",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:llm_workspace",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "ml_datasets",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:ml_datasets",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "penguin_models",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:penguin_models",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "remote_models",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:remote_models",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "summary_classification_cluster",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:summary_classification_cluster",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "temp_dataset",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:temp_dataset",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "test_dataset",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:test_dataset",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "test_plugin",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:test_plugin",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "theLook_retail",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:theLook_retail",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    },
+    {
+      "datasetReference": {
+        "datasetId": "ucp_analytics",
+        "projectId": "test-project-0728-467323"
+      },
+      "id": "test-project-0728-467323:ucp_analytics",
+      "kind": "bigquery#dataset",
+      "location": "US",
+      "type": "DEFAULT"
+    }
+  ],
+  "source": "BigQuery"
+}

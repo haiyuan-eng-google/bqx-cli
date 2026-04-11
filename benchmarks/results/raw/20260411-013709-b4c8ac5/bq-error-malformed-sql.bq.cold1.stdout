@@ -1,0 +1,3 @@
+Error in query string: Error processing job 'test-
+project-0728-467323:bqjob_r96c5ce3aeaabcda_0000019d7bb270e2_1': Syntax error:
+Unexpected identifier "SELEKT" at [1:1]

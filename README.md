@@ -1,8 +1,8 @@
 # dcx — Agent-Native Data Cloud CLI
 
 An agent-native CLI for Google Cloud's Data Cloud, built in Rust.
-[**6.0x faster than `bq`**](docs/benchmark_results_bigquery.md) with
-100% correctness across 11 validated tasks.
+[**4.8x faster than `bq`**](docs/benchmark_results_bigquery.md) with
+token-parity via `--format=json-minified`.
 
 ## Why dcx
 
@@ -108,8 +108,8 @@ dcx profiles validate --profile=bench # validate source profiles
 ## Output Format
 
 All commands default to structured JSON. `--format` controls output.
-Use `--format=json-minified` for agent/CI pipelines — same schema, ~32%
-fewer tokens.
+Use `--format=json-minified` for agent/CI pipelines — same schema, 27%
+fewer tokens ([benchmarked](docs/benchmark_results_bigquery.md)).
 
 ```bash
 dcx analytics evaluate --evaluator=latency --threshold=5000 --last=1h
@@ -165,7 +165,7 @@ Protocol) server over stdio, using JSON-RPC 2.0.
 
 - Domain filtering via `MCP_DOMAINS` env var
 - Mutations and interactive commands excluded
-- Output defaults to `json-minified` (~32% fewer tokens); override with
+- Output defaults to `json-minified` (~27% fewer tokens); override with
   `DCX_MCP_FORMAT=json` for debugging
 
 ```bash
@@ -260,7 +260,7 @@ Systematic benchmark suite comparing dcx against `bq` and `gcloud spanner`.
 
 | Track | Tasks | Key Result |
 |-------|-------|------------|
-| [BigQuery parity](docs/benchmark_results_bigquery.md) | 11 validated | **6.0x faster**, 100% vs 91% correctness |
+| [BigQuery parity](docs/benchmark_results_bigquery.md) | 12 tasks × 3 CLIs | **4.8x faster** (minified), 27% fewer tokens |
 | Spanner parity | 11 | 1.3–3.9x faster on error-handling tasks |
 | dcx differentiated | 8 | 7/8 pass, avg 141 ms |
 

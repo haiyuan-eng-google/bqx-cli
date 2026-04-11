@@ -202,7 +202,7 @@ fn build_thin_skill_md(
     out.push_str("- Use `--dry-run` to preview the API request\n");
     out.push_str("- Use `--format table` for visual scanning, `--format json` for piping\n");
     out.push_str(
-        "- Use `--format json-minified` for agent pipelines (same schema, ~32% fewer tokens)\n",
+        "- Use `--format json-minified` for agent pipelines (same schema, ~27% fewer tokens)\n",
     );
     if commands.iter().any(|c| c.action == "list") {
         out.push_str(&format!(

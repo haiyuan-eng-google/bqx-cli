@@ -1,0 +1,1 @@
+{"error":{"code":"NOT_FOUND","exit_code":4,"message":"BigQuery API error 404: Not found: Dataset test-project-0728-467323:does_not_exist_dataset_xyz","retryable":false,"status":"error"}}

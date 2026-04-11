@@ -1,25 +1,25 @@
 # BigQuery CLI Benchmark Results: dcx vs bq
 
-Systematic latency and correctness comparison of `dcx` against the standard
-`bq` CLI across 12 BigQuery tasks covering metadata reads, SQL queries,
-dry-run validation, and error handling.
+Systematic latency, correctness, and token-efficiency comparison of `dcx`
+against the standard `bq` CLI across 12 BigQuery tasks covering metadata
+reads, SQL queries, dry-run validation, and error handling.
 
 ## Key Numbers
 
-| Metric | dcx | bq |
-|--------|-----|-----|
-| **Average task p50 (11 valid tasks)** | 571 ms | 2,748 ms |
-| **Geometric mean speedup** | **6.0x faster** | baseline |
-| **Correctness (warm trials)** | 33/33 (100%) | 30/33 (91%) |
+| Metric | dcx | dcx (minified) | bq |
+|--------|-----|----------------|-----|
+| **Average task p50 (warm)** | 648 ms | 613 ms | 2,939 ms |
+| **Avg p50 ratio** | **4.5x faster** | **4.8x faster** | baseline |
+| **Correctness (warm trials)** | 33/36 (92%) | 33/36 (92%) | 30/36 (83%) |
+| **6-step workflow tokens** | ~2,859 | **~2,080** | ~2,115 |
 
-One task (`bq-error-permission-denied`) is excluded from the primary
-scorecard because it targets a public project and does not produce a
-permission error for either CLI — see [Correctness Notes](#correctness-notes).
-Including it: average p50 672 ms / 2,870 ms, geomean 5.5x, correctness
-33/36 (92%) / 30/36 (83%).
+`--format=json-minified` reduces output tokens by **27%** compared to
+pretty JSON, bringing dcx below `bq`'s token cost while preserving the
+same schema and envelope structure. No latency penalty — minified output
+is slightly faster due to reduced serialization and I/O.
 
 Results were directionally stable across 3 warm trials per task; see the
-[scorecard p95s](../benchmarks/results/scorecards/20260410-171926-cdc4d94.md)
+[scorecard](../benchmarks/results/scorecards/20260411-013709-b4c8ac5.md)
 for variance bounds.
 
 **Benchmark contract:** Correctness is defined by the deterministic
@@ -38,6 +38,8 @@ This benchmark measures a specific, narrow slice:
   token-based flows
 - **12 tasks:** 4 metadata reads, 2 SQL queries, 1 dry-run, 5 error-handling
   — read-heavy, no mutations, no concurrent load
+- **3 CLI variants:** `dcx` (pretty JSON), `dcx-minified` (json-minified),
+  `bq` (json)
 - **One known bad task:** `bq-error-permission-denied` targets a public
   project and does not actually produce a permission error for either CLI
 - **3 warm trials per task:** sufficient for directional conclusions, not for
@@ -52,7 +54,7 @@ hosts and with higher trial counts before quoting in external materials.
 
 | | |
 |---|---|
-| Run ID | `20260410-171926-cdc4d94` |
+| Run ID | `20260411-013709-b4c8ac5` |
 | dcx version | 0.5.0 (Rust, compiled release) |
 | bq version | BigQuery CLI 2.1.28 (Python) |
 | gcloud SDK | 559.0.0 |
@@ -69,31 +71,32 @@ These are the bread-and-butter commands an agent uses to explore a project
 before writing SQL: list datasets, inspect a dataset, list tables, get a
 table's schema.
 
-| Task | dcx p50 | bq p50 | Speedup | dcx | bq |
-|------|--------:|-------:|--------:|:---:|:--:|
-| List datasets | 966 ms | 3,005 ms | **3.1x** | PASS | PASS |
-| Get dataset metadata | 725 ms | 2,814 ms | **3.9x** | PASS | PASS |
-| List tables | 581 ms | 2,725 ms | **4.7x** | PASS | PASS |
-| Get table schema | 572 ms | 2,607 ms | **4.6x** | PASS | PASS |
+| Task | dcx p50 | dcx-minified p50 | bq p50 | Speedup (dcx) | dcx | bq |
+|------|--------:|-----------------:|-------:|--------------:|:---:|:--:|
+| List datasets | 875 ms | 821 ms | 3,123 ms | **3.6x** | PASS | PASS |
+| Get dataset metadata | 692 ms | 589 ms | 2,807 ms | **4.1x** | PASS | PASS |
+| List tables | 600 ms | 595 ms | 2,825 ms | **4.7x** | PASS | PASS |
+| Get table schema | 690 ms | 583 ms | 2,784 ms | **4.0x** | PASS | PASS |
 
 **Average metadata speedup: 4.1x.**
 
 ### SQL Queries
 
-| Task | dcx p50 | bq p50 | Speedup | dcx | bq |
-|------|--------:|-------:|--------:|:---:|:--:|
-| Aggregate query (`COUNT`, `AVG`) | 856 ms | 3,528 ms | **4.1x** | PASS | PASS |
-| Nested-field query (STRUCT access) | 973 ms | 3,201 ms | **3.3x** | PASS | PASS |
+| Task | dcx p50 | dcx-minified p50 | bq p50 | Speedup (dcx) | dcx | bq |
+|------|--------:|-----------------:|-------:|--------------:|:---:|:--:|
+| Aggregate query (`COUNT`, `AVG`) | 875 ms | 874 ms | 3,261 ms | **3.7x** | PASS | PASS |
+| Nested-field query (STRUCT access) | 820 ms | 815 ms | 3,255 ms | **4.0x** | PASS | PASS |
 
 Query execution time is dominated by BigQuery server-side processing, so the
-speedup here is ~3.7x rather than the higher ratios seen in metadata ops. In
-this benchmark, dcx overhead appears small relative to total request time.
+speedup here is ~3.9x rather than the higher ratios seen in metadata ops.
+`dcx-minified` has identical latency since the serialization savings are
+negligible relative to network round-trip time.
 
 ### Dry-Run (SQL Validation)
 
-| Task | dcx p50 | bq p50 | Speedup | dcx | bq |
-|------|--------:|-------:|--------:|:---:|:--:|
-| Dry-run aggregate query | 90 ms | 2,990 ms | **33.2x** | PASS | PASS |
+| Task | dcx p50 | dcx-minified p50 | bq p50 | Speedup (dcx) | dcx | bq |
+|------|--------:|-----------------:|-------:|--------------:|:---:|:--:|
+| Dry-run aggregate query | 97 ms | 101 ms | 3,317 ms | **34.2x** | PASS | PASS |
 
 This is the most dramatic result. `dcx --dry-run` resolves entirely locally
 (validates flags, builds the request, and returns the structured request body)
@@ -102,31 +105,31 @@ servers and returns estimated bytes processed.
 
 **Fairness note:** these are not identical product semantics. `dcx --dry-run`
 previews the outbound request; `bq --dry_run` performs a server-side
-validation pass. The 33.2x result is valid operationally — an agent using
+validation pass. The 34.2x result is valid operationally — an agent using
 dry-run to check flag/SQL structure before executing saves ~3 seconds per
 step — but it is not a pure apples-to-apples API round-trip comparison.
 
 ### Error Handling
 
-| Task | dcx p50 | bq p50 | Speedup | dcx | bq |
-|------|--------:|-------:|--------:|:---:|:--:|
-| Malformed SQL | 593 ms | 2,687 ms | **4.5x** | PASS | PASS |
-| Nonexistent dataset | 646 ms | 2,823 ms | **4.4x** | PASS | PASS |
-| Invalid auth | 185 ms | 2,979 ms | **16.1x** | PASS | FAIL |
-| Invalid flag | 91 ms | 871 ms | **9.6x** | PASS | PASS |
-| Permission denied | 1,784 ms | 4,215 ms | **2.4x** | * | * |
+| Task | dcx p50 | dcx-minified p50 | bq p50 | Speedup (dcx) | dcx | bq |
+|------|--------:|-----------------:|-------:|--------------:|:---:|:--:|
+| Malformed SQL | 553 ms | 573 ms | 2,881 ms | **5.2x** | PASS | PASS |
+| Nonexistent dataset | 657 ms | 661 ms | 2,881 ms | **4.4x** | PASS | PASS |
+| Invalid auth | 179 ms | 177 ms | 3,303 ms | **18.4x** | PASS | FAIL |
+| Invalid flag | 99 ms | 99 ms | 891 ms | **9.0x** | PASS | PASS |
+| Permission denied | 1,643 ms | 1,473 ms | 3,938 ms | **2.4x** | * | * |
 
 Error-handling speed matters because agent self-correction loops depend on
 fast feedback. When an agent issues a bad query and needs to retry, `dcx`
-returns the error 3–16x faster.
+returns the error 3–18x faster.
 
-**Auth failure (16.1x):** `dcx` detects the invalid credential locally and
-exits in 185 ms. `bq` with `--credential_file /dev/null` exits 0 and returns
+**Auth failure (18.4x):** `dcx` detects the invalid credential locally and
+exits in 179 ms. `bq` with `--credential_file /dev/null` exits 0 and returns
 data — the explicit credential override appears not to be honored in this
 scenario, and `bq` falls back to ADC silently.
 
-**Invalid flag (9.6x):** `dcx` validates flags locally (91 ms) before making
-any network call. `bq` still takes ~870 ms to report the same error.
+**Invalid flag (9.0x):** `dcx` validates flags locally (99 ms) before making
+any network call. `bq` still takes ~891 ms to report the same error.
 
 \* Permission-denied task targets `bigquery-public-data`, which is publicly
 accessible. Both CLIs return exit 0 with data instead of a permission error.
@@ -149,8 +152,8 @@ this benchmark.
 
 The Python interpreter startup cost appears in every `bq` invocation. In a
 5-step agent workflow, this alone would add 1.5–2.5 seconds of overhead —
-consistent with the ~14-second gap observed in the workflow rollup below.
-Isolating startup from API latency was not done in this run.
+consistent with the gap observed in the workflow rollup below. Isolating
+startup from API latency was not done in this run.
 
 ## Agent Workflow Impact
 
@@ -162,15 +165,29 @@ list datasets → pick dataset → list tables → get schema → dry-run query 
 
 That's 6 sequential CLI calls. Using warm p50 numbers:
 
-| | dcx | bq |
-|---|---|---|
-| Total latency | 966 + 725 + 581 + 572 + 90 + 856 = **3,790 ms** | 3,005 + 2,814 + 2,725 + 2,607 + 2,990 + 3,528 = **17,669 ms** |
-| Wall clock | **~4 seconds** | **~18 seconds** |
+### Latency
+
+| | dcx | dcx (minified) | bq |
+|---|---|---|---|
+| Total latency | 875 + 692 + 600 + 690 + 97 + 875 = **3,829 ms** | 821 + 589 + 595 + 583 + 101 + 874 = **3,563 ms** | 3,123 + 2,807 + 2,825 + 2,784 + 3,317 + 3,261 = **18,117 ms** |
+| Wall clock | **~4 seconds** | **~4 seconds** | **~18 seconds** |
 
 An agent using `dcx` completes the same exploration in **4 seconds vs 18
 seconds** — a 4.7x end-to-end speedup. For iterative workflows where the
 agent retries 2–3 times (common with self-correction), the gap widens to
 ~12 seconds vs ~54 seconds.
+
+### Token Cost
+
+| | dcx (json) | dcx (json-minified) | bq |
+|---|---:|---:|---:|
+| Total output bytes | 11,436 B | 8,319 B | 8,461 B |
+| Estimated tokens (÷4) | ~2,859 | **~2,080** | ~2,115 |
+| vs dcx (json) | baseline | **−27%** | −26% |
+
+`--format=json-minified` closes the token gap entirely: dcx-minified uses
+**~2,080 tokens** vs bq's **~2,115 tokens** — effectively equivalent, with
+dcx providing a more consistent envelope structure.
 
 ## Token Efficiency
 
@@ -178,36 +195,25 @@ Agent workflows pay for every byte of CLI output that enters the LLM context
 window. This section estimates token cost using the approximation
 **1 token ~ 4 bytes** (conservative for JSON with repeated keys).
 
-### Per-Task Token Estimates
+### Per-Task Token Comparison
 
-| Task | dcx stdout | ~dcx tokens | bq stdout | ~bq tokens |
+| Task | dcx (json) | dcx (minified) | bq | Minified reduction |
 |------|--------:|--------:|--------:|--------:|
-| List datasets | 7,699 B | ~1,925 | 5,501 B | ~1,375 |
-| Get dataset | 812 B | ~203 | 650 B | ~163 |
-| List tables | 704 B | ~176 | 488 B | ~122 |
-| Get table schema | 1,272 B | ~318 | 203 B | ~51 |
-| Dry-run | 350 B | ~88 | 1,317 B | ~329 |
-| Aggregate query | 599 B | ~150 | 302 B | ~76 |
-| Nested query | 748 B | ~187 | 451 B | ~113 |
+| List datasets | 7,699 B (~1,925 tok) | 5,531 B (~1,383 tok) | 5,501 B (~1,375 tok) | **28%** |
+| Get dataset | 812 B (~203 tok) | 645 B (~161 tok) | 650 B (~163 tok) | **21%** |
+| List tables | 704 B (~176 tok) | 518 B (~130 tok) | 488 B (~122 tok) | **26%** |
+| Get table schema | 1,272 B (~318 tok) | 986 B (~247 tok) | 203 B (~51 tok) | **22%** |
+| Dry-run | 350 B (~88 tok) | 312 B (~78 tok) | 1,317 B (~329 tok) | **11%** |
+| Aggregate query | 599 B (~150 tok) | 327 B (~82 tok) | 302 B (~76 tok) | **45%** |
+| Nested query | 748 B (~187 tok) | 476 B (~119 tok) | 451 B (~113 tok) | **36%** |
 
-### Agent Workflow Token Budget
+**Average reduction with `json-minified`: 27%** across read/query tasks.
 
-For the 6-step exploration loop (list datasets → get dataset → list tables →
-get schema → dry-run → execute query):
+Tasks with more data (list datasets, query results) see the largest absolute
+savings. Dry-run sees only 11% reduction because its output is already small
+and has fewer nested structures to compact.
 
-| | dcx | bq |
-|---|---:|---:|
-| Total output | 11,436 B | 8,461 B |
-| Estimated tokens | **~2,859** | **~2,115** |
-
-`dcx` uses ~35% more tokens per workflow because it includes the
-`items`/`source` envelope and richer field details in metadata responses.
-However, both totals are small — under 3K tokens per full exploration, a
-fraction of a typical 128K-token context window.
-
-**`--format=json-minified`** eliminates pretty-print whitespace, bringing
-the estimated workflow total from ~2,859 to ~1,933 tokens (~32% reduction),
-which is slightly below `bq`'s 2,115 tokens. Same schema, same fields.
+### Token Tradeoffs
 
 The tradeoff is **parseability vs compactness**. `dcx` normalizes all list
 responses to a consistent envelope:
@@ -223,6 +229,11 @@ itself consumes tokens. `dcx`'s uniform envelope covers every list command;
 get, query, dry-run, and error responses still have their own shapes, but
 the list normalization alone reduces the per-command parsing burden for the
 most common discovery operations.
+
+With `json-minified`, dcx achieves token parity with `bq` while retaining
+the consistent envelope. The remaining token overhead (if any) comes from
+richer field detail in metadata responses — information that is useful for
+agent decision-making.
 
 ### Error Output Token Cost
 
@@ -279,9 +290,13 @@ For `bq` CLI:
 
 For `dcx`:
 
-- **Output size.** `dcx` metadata responses are ~35% larger than `bq`
-  equivalents due to the `items`/`source` envelope. For token-sensitive agent
-  workflows, a compact output mode could reduce this overhead.
+- **Token parity achieved.** With `--format=json-minified`, dcx output
+  tokens (~2,080) are now below `bq` (~2,115) for the standard 6-step
+  exploration workflow. The 27% reduction from Phase 1 closes the gap that
+  existed with pretty JSON output.
+- **Further reduction possible.** Phase 2 (typed compact schemas) can strip
+  redundant API fields (kind, selfLink, etag) and hoist projectId to the
+  envelope, targeting an additional ~35% reduction on top of minification.
 - **Permission-denied test gap.** The current benchmark does not exercise a
   real permission-denied scenario. Adding a task against a restricted project
   would validate dcx's error classification for this case.
@@ -294,15 +309,20 @@ For `dcx`:
 - Add bytes-processed / job metadata appendix using
   `benchmarks/scripts/collect_bigquery_jobs.sql`
 - Increase warm trials to 10+ for percentile-level statistical claims
-- Test with `gcloud alpha bq` if relevant as an alternative baseline
+- Benchmark Phase 2 compact output format when available
 
 ## Artifacts
 
-- [Scorecard](../benchmarks/results/scorecards/20260410-171926-cdc4d94.md)
-- [Summary JSON](../benchmarks/results/raw/20260410-171926-cdc4d94/summary.json)
-- [Raw results (NDJSON)](../benchmarks/results/raw/20260410-171926-cdc4d94/results.ndjson)
-- [Environment snapshot](../benchmarks/results/raw/20260410-171926-cdc4d94/environment.json)
+- [Scorecard](../benchmarks/results/scorecards/20260411-013709-b4c8ac5.md)
+- [Summary JSON](../benchmarks/results/raw/20260411-013709-b4c8ac5/summary.json)
+- [Raw results (NDJSON)](../benchmarks/results/raw/20260411-013709-b4c8ac5/results.ndjson)
+- [Environment snapshot](../benchmarks/results/raw/20260411-013709-b4c8ac5/environment.json)
 - [Benchmark methodology](cli_benchmark_plan.md)
+
+### Previous Runs
+
+- [Run 20260410-171926](../benchmarks/results/scorecards/20260410-171926-cdc4d94.md)
+  — initial benchmark (dcx vs bq only, no json-minified variant)
 
 ## Reproduction
 

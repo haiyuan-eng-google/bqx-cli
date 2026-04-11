@@ -24,6 +24,14 @@ tasks:
         validation:
           type: json_keys
           expected_keys: [items, source]
+      - name: dcx-minified
+        command: >-
+          dcx datasets list
+          --project-id {project}
+          --format json-minified
+        validation:
+          type: json_keys
+          expected_keys: [items, source]
       - name: bq
         command: >-
           bq ls --format=json --project_id={project}
@@ -52,6 +60,15 @@ tasks:
         validation:
           type: json_keys
           expected_keys: [datasetReference]
+      - name: dcx-minified
+        command: >-
+          dcx datasets get
+          --project-id {project}
+          --dataset-id {bq_benchmark_dataset}
+          --format json-minified
+        validation:
+          type: json_keys
+          expected_keys: [datasetReference]
       - name: bq
         command: >-
           bq show --format=json {project}:{bq_benchmark_dataset}
@@ -75,6 +92,15 @@ tasks:
         validation:
           type: json_keys
           expected_keys: [items, source]
+      - name: dcx-minified
+        command: >-
+          dcx tables list
+          --project-id {project}
+          --dataset-id {bq_benchmark_dataset}
+          --format json-minified
+        validation:
+          type: json_keys
+          expected_keys: [items, source]
       - name: bq
         command: >-
           bq ls --format=json {project}:{bq_benchmark_dataset}
@@ -95,6 +121,16 @@ tasks:
           --dataset-id {bq_benchmark_dataset}
           --table-id {bq_table_narrow}
           --format json
+        validation:
+          type: json_keys
+          expected_keys: [schema]
+      - name: dcx-minified
+        command: >-
+          dcx tables get
+          --project-id {project}
+          --dataset-id {bq_benchmark_dataset}
+          --table-id {bq_table_narrow}
+          --format json-minified
         validation:
           type: json_keys
           expected_keys: [schema]
@@ -123,6 +159,16 @@ tasks:
         validation:
           type: json_keys
           expected_keys: [dry_run, method, url]
+      - name: dcx-minified
+        command: >-
+          dcx jobs query
+          --project-id {project}
+          --query "SELECT word, SUM(word_count) AS total FROM \`bigquery-public-data.samples.shakespeare\` GROUP BY word ORDER BY total DESC LIMIT 10"
+          --dry-run
+          --format json-minified
+        validation:
+          type: json_keys
+          expected_keys: [dry_run, method, url]
       - name: bq
         command: >-
           bq query --dry_run --format=json --use_legacy_sql=false
@@ -143,6 +189,16 @@ tasks:
           --project-id {project}
           --query "SELECT word, SUM(word_count) AS total FROM \`bigquery-public-data.samples.shakespeare\` GROUP BY word ORDER BY total DESC LIMIT 10"
           --format json
+        validation:
+          type: semantic_sql_result
+          expected_columns: [word, total]
+          min_rows: 1
+      - name: dcx-minified
+        command: >-
+          dcx jobs query
+          --project-id {project}
+          --query "SELECT word, SUM(word_count) AS total FROM \`bigquery-public-data.samples.shakespeare\` GROUP BY word ORDER BY total DESC LIMIT 10"
+          --format json-minified
         validation:
           type: semantic_sql_result
           expected_columns: [word, total]
@@ -169,6 +225,16 @@ tasks:
           --project-id {project}
           --query "SELECT author.name, COUNT(*) AS commits FROM \`bigquery-public-data.github_repos.commits\` GROUP BY author.name ORDER BY commits DESC LIMIT 10"
           --format json
+        validation:
+          type: semantic_sql_result
+          expected_columns: [name, commits]
+          min_rows: 1
+      - name: dcx-minified
+        command: >-
+          dcx jobs query
+          --project-id {project}
+          --query "SELECT author.name, COUNT(*) AS commits FROM \`bigquery-public-data.github_repos.commits\` GROUP BY author.name ORDER BY commits DESC LIMIT 10"
+          --format json-minified
         validation:
           type: semantic_sql_result
           expected_columns: [name, commits]
@@ -202,6 +268,12 @@ tasks:
           --project-id {project}
           --query "SELEKT * FORM shakespeare"
           --format json
+      - name: dcx-minified
+        command: >-
+          dcx jobs query
+          --project-id {project}
+          --query "SELEKT * FORM shakespeare"
+          --format json-minified
       - name: bq
         command: >-
           bq query --format=json --use_legacy_sql=false
@@ -225,6 +297,12 @@ tasks:
           --project-id {project}
           --dataset-id {bq_nonexistent_dataset}
           --format json
+      - name: dcx-minified
+        command: >-
+          dcx datasets get
+          --project-id {project}
+          --dataset-id {bq_nonexistent_dataset}
+          --format json-minified
       - name: bq
         command: >-
           bq show --format=json {project}:{bq_nonexistent_dataset}
@@ -247,6 +325,12 @@ tasks:
           --project-id {project}
           --token invalid-token-value
           --format json
+      - name: dcx-minified
+        command: >-
+          dcx datasets list
+          --project-id {project}
+          --token invalid-token-value
+          --format json-minified
       - name: bq
         command: >-
           bq ls --format=json --project_id={project}
@@ -270,6 +354,12 @@ tasks:
           --project-id {project}
           --nonexistent-flag value
           --format json
+      - name: dcx-minified
+        command: >-
+          dcx datasets list
+          --project-id {project}
+          --nonexistent-flag value
+          --format json-minified
       - name: bq
         command: >-
           bq ls --format=json --nonexistent_flag=value
@@ -291,6 +381,11 @@ tasks:
           dcx datasets list
           --project-id bigquery-public-data
           --format json
+      - name: dcx-minified
+        command: >-
+          dcx datasets list
+          --project-id bigquery-public-data
+          --format json-minified
       - name: bq
         command: >-
           bq ls --format=json --project_id=bigquery-public-data

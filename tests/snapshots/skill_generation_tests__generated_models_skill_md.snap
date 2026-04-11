@@ -35,6 +35,6 @@ See [references/commands.md](references/commands.md) for flags, constraints, and
 
 - Use `--dry-run` to preview the API request
 - Use `--format table` for visual scanning, `--format json` for piping
-- Use `--format json-minified` for agent pipelines (same schema, ~32% fewer tokens)
+- Use `--format json-minified` for agent pipelines (same schema, ~27% fewer tokens)
 - Use `models list` to discover available models
 - Use `models get` to inspect a specific model
