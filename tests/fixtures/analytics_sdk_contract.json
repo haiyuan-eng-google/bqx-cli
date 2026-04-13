@@ -1,8 +1,8 @@
 {
-  "generated": "2026-04-06",
+  "generated": "2026-04-13",
   "upstream_repo": "haiyuan-eng-google/BigQuery-Agent-Analytics-SDK",
   "upstream_branch": "main",
-  "upstream_sha": "5bc8876b73841ea20d24b6606fcff39a6e22b419",
+  "upstream_sha": "655d597be778687ebd0d441b9e978c82ad240e8b",
   "commands": [
     {
       "sdk_command": "doctor",
@@ -1097,6 +1097,14 @@
           "status": "exact"
         },
         {
+          "sdk_flag": "--connection-id",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
           "sdk_flag": "--include-justification",
           "sdk_type": "bool",
           "sdk_required": false,
@@ -1284,6 +1292,233 @@
           "global": true
         }
       ],
+      "args": []
+    },
+    {
+      "sdk_command": "ontology-property-graph",
+      "dcx_command": null,
+      "status": "missing",
+      "flags": [
+        {
+          "sdk_flag": "--project-id",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": "BQ_AGENT_PROJECT",
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--dataset-id",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": "BQ_AGENT_DATASET",
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--spec-path",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--env",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--graph-name",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--execute",
+          "sdk_type": "bool",
+          "sdk_required": false,
+          "sdk_default": false,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--format",
+          "sdk_type": "str",
+          "sdk_required": false,
+          "sdk_default": "sql",
+          "sdk_env": null,
+          "status": "missing"
+        }
+      ],
+      "dcx_extensions": [],
+      "args": []
+    },
+    {
+      "sdk_command": "ontology-build",
+      "dcx_command": null,
+      "status": "missing",
+      "flags": [
+        {
+          "sdk_flag": "--project-id",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": "BQ_AGENT_PROJECT",
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--dataset-id",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": "BQ_AGENT_DATASET",
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--spec-path",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--session-ids",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--env",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--graph-name",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--table-id",
+          "sdk_type": "str",
+          "sdk_required": false,
+          "sdk_default": "agent_events",
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--endpoint",
+          "sdk_type": "str",
+          "sdk_required": false,
+          "sdk_default": "gemini-2.5-flash",
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--no-ai-generate",
+          "sdk_type": "bool",
+          "sdk_required": false,
+          "sdk_default": false,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--format",
+          "sdk_type": "str",
+          "sdk_required": false,
+          "sdk_default": "json",
+          "sdk_env": null,
+          "status": "missing"
+        }
+      ],
+      "dcx_extensions": [],
+      "args": []
+    },
+    {
+      "sdk_command": "ontology-showcase-gql",
+      "dcx_command": null,
+      "status": "missing",
+      "flags": [
+        {
+          "sdk_flag": "--project-id",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": "BQ_AGENT_PROJECT",
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--dataset-id",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": "BQ_AGENT_DATASET",
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--spec-path",
+          "sdk_type": "str",
+          "sdk_required": true,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--env",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--graph-name",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--relationship",
+          "sdk_type": "optional<str>",
+          "sdk_required": false,
+          "sdk_default": null,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--no-session-filter",
+          "sdk_type": "bool",
+          "sdk_required": false,
+          "sdk_default": false,
+          "sdk_env": null,
+          "status": "missing"
+        },
+        {
+          "sdk_flag": "--format",
+          "sdk_type": "str",
+          "sdk_required": false,
+          "sdk_default": "sql",
+          "sdk_env": null,
+          "status": "missing"
+        }
+      ],
+      "dcx_extensions": [],
       "args": []
     },
     {
