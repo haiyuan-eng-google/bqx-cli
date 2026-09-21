@@ -546,6 +546,10 @@ def categorical_eval(
         None,
         help="Model endpoint for classification.",
     ),
+    connection_id: Optional[str] = typer.Option(
+        None,
+        help="BQ connection ID for AI.CLASSIFY / AI.GENERATE.",
+    ),
     include_justification: bool = typer.Option(
         True,
         help="Include justification in output.",
@@ -606,6 +610,8 @@ def categorical_eval(
     }
     if endpoint is not None:
       config_kwargs["endpoint"] = endpoint
+    if connection_id is not None:
+      config_kwargs["connection_id"] = connection_id
     if results_table is not None:
       config_kwargs["results_table"] = results_table
     if prompt_version is not None:
@@ -624,6 +630,7 @@ def categorical_eval(
         table_id,
         location,
         endpoint=endpoint,
+        connection_id=connection_id,
     )
     report = client.evaluate_categorical(config=config, filters=filters)
     typer.echo(format_output(report, fmt))
@@ -671,6 +678,213 @@ def categorical_views(
     )
     result = vm.create_all_views()
     typer.echo(format_output(result, fmt))
+  except Exception as exc:
+    typer.echo(f"Error: {exc}", err=True)
+    raise typer.Exit(code=2)
+
+
+# ------------------------------------------------------------------ #
+# ontology-property-graph                                              #
+# ------------------------------------------------------------------ #
+
+
+@app.command("ontology-property-graph")
+def ontology_property_graph(
+    project_id: str = typer.Option(
+        ..., envvar="BQ_AGENT_PROJECT", help=_PROJECT_HELP
+    ),
+    dataset_id: str = typer.Option(
+        ..., envvar="BQ_AGENT_DATASET", help=_DATASET_HELP
+    ),
+    spec_path: str = typer.Option(..., help="Path to YAML graph spec file."),
+    env: Optional[str] = typer.Option(
+        None, help="Value for {{ env }} placeholder in binding.source."
+    ),
+    graph_name: Optional[str] = typer.Option(
+        None, help="Override the property graph name."
+    ),
+    execute: bool = typer.Option(
+        False, help="Execute the DDL against BigQuery."
+    ),
+    fmt: str = typer.Option(
+        "sql",
+        "--format",
+        help="Output format: sql|json.",
+    ),
+) -> None:
+  """Generate or create a Property Graph from an ontology YAML spec."""
+  try:
+    from .ontology_models import load_graph_spec
+    from .ontology_property_graph import OntologyPropertyGraphCompiler
+
+    spec = load_graph_spec(spec_path, env=env)
+    compiler = OntologyPropertyGraphCompiler(
+        project_id=project_id,
+        dataset_id=dataset_id,
+        spec=spec,
+    )
+    ddl = compiler.get_ddl(graph_name=graph_name)
+
+    if execute:
+      success = compiler.create_property_graph(graph_name=graph_name)
+      result = {
+          "graph_name": graph_name or spec.name,
+          "graph_ref": f"{project_id}.{dataset_id}.{graph_name or spec.name}",
+          "success": success,
+          "ddl": ddl,
+      }
+      typer.echo(format_output(result, fmt if fmt != "sql" else "json"))
+    else:
+      if fmt == "sql":
+        typer.echo(ddl)
+      else:
+        result = {
+            "graph_name": graph_name or spec.name,
+            "ddl": ddl,
+        }
+        typer.echo(format_output(result, fmt))
+  except Exception as exc:
+    typer.echo(f"Error: {exc}", err=True)
+    raise typer.Exit(code=2)
+
+
+# ------------------------------------------------------------------ #
+# ontology-build (end-to-end pipeline)                                 #
+# ------------------------------------------------------------------ #
+
+
+@app.command("ontology-build")
+def ontology_build(
+    project_id: str = typer.Option(
+        ..., envvar="BQ_AGENT_PROJECT", help=_PROJECT_HELP
+    ),
+    dataset_id: str = typer.Option(
+        ..., envvar="BQ_AGENT_DATASET", help=_DATASET_HELP
+    ),
+    spec_path: str = typer.Option(..., help="Path to YAML graph spec file."),
+    session_ids: str = typer.Option(
+        ..., help="Comma-separated session IDs to extract."
+    ),
+    env: Optional[str] = typer.Option(
+        None, help="Value for {{ env }} placeholder in binding.source."
+    ),
+    graph_name: Optional[str] = typer.Option(
+        None, help="Override the property graph name."
+    ),
+    table_id: str = typer.Option(
+        "agent_events", help="Source telemetry table name."
+    ),
+    endpoint: str = typer.Option(
+        "gemini-2.5-flash", help="AI.GENERATE model endpoint."
+    ),
+    no_ai_generate: bool = typer.Option(
+        False, help="Skip AI.GENERATE; fetch raw payloads instead."
+    ),
+    fmt: str = typer.Option(
+        "json",
+        "--format",
+        help="Output format: json|text|table.",
+    ),
+) -> None:
+  """Run the full ontology graph pipeline end-to-end."""
+  try:
+    from .ontology_orchestrator import build_ontology_graph
+
+    sids = [s.strip() for s in session_ids.split(",") if s.strip()]
+    result = build_ontology_graph(
+        session_ids=sids,
+        spec_path=spec_path,
+        project_id=project_id,
+        dataset_id=dataset_id,
+        env=env,
+        graph_name=graph_name,
+        table_id=table_id,
+        endpoint=endpoint,
+        use_ai_generate=not no_ai_generate,
+    )
+
+    output = {
+        "graph_name": result["graph_name"],
+        "graph_ref": result["graph_ref"],
+        "nodes_extracted": len(result["graph"].nodes),
+        "edges_extracted": len(result["graph"].edges),
+        "tables_created": result["tables_created"],
+        "rows_materialized": result["rows_materialized"],
+        "property_graph_created": result["property_graph_created"],
+    }
+    typer.echo(format_output(output, fmt))
+
+    if not result["property_graph_created"]:
+      typer.echo(
+          "Error: Property Graph creation failed. "
+          "Tables and data were materialized but the graph object "
+          "was not created.",
+          err=True,
+      )
+      raise typer.Exit(code=1)
+  except typer.Exit:
+    raise
+  except Exception as exc:
+    typer.echo(f"Error: {exc}", err=True)
+    raise typer.Exit(code=2)
+
+
+# ------------------------------------------------------------------ #
+# ontology-showcase-gql                                                #
+# ------------------------------------------------------------------ #
+
+
+@app.command("ontology-showcase-gql")
+def ontology_showcase_gql(
+    project_id: str = typer.Option(
+        ..., envvar="BQ_AGENT_PROJECT", help=_PROJECT_HELP
+    ),
+    dataset_id: str = typer.Option(
+        ..., envvar="BQ_AGENT_DATASET", help=_DATASET_HELP
+    ),
+    spec_path: str = typer.Option(..., help="Path to YAML graph spec file."),
+    env: Optional[str] = typer.Option(
+        None, help="Value for {{ env }} placeholder in binding.source."
+    ),
+    graph_name: Optional[str] = typer.Option(
+        None, help="Override the property graph name."
+    ),
+    relationship: Optional[str] = typer.Option(
+        None, help="Relationship to traverse (default: first in spec)."
+    ),
+    no_session_filter: bool = typer.Option(
+        False, help="Omit the WHERE session_id filter."
+    ),
+    fmt: str = typer.Option(
+        "sql",
+        "--format",
+        help="Output format: sql|json.",
+    ),
+) -> None:
+  """Generate a GQL showcase query from an ontology YAML spec."""
+  try:
+    from .ontology_models import load_graph_spec
+    from .ontology_orchestrator import compile_showcase_gql
+
+    spec = load_graph_spec(spec_path, env=env)
+    gql = compile_showcase_gql(
+        spec,
+        project_id=project_id,
+        dataset_id=dataset_id,
+        graph_name=graph_name,
+        relationship_name=relationship,
+        session_filter=not no_session_filter,
+    )
+
+    if fmt == "sql":
+      typer.echo(gql)
+    else:
+      output = {
+          "graph_name": graph_name or spec.name,
+          "relationship": relationship or spec.relationships[0].name,
+          "gql": gql,
+      }
+      typer.echo(format_output(output, fmt))
   except Exception as exc:
     typer.echo(f"Error: {exc}", err=True)
     raise typer.Exit(code=2)
